@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     private const string VERTICAL_INPUT = "Vertical";
 
     [SerializeField] private float movementSpeed;
+    [SerializeField] private float rotateSpeed;
+    [SerializeField] private Transform body;
 
     private float horizontalInput;
     private float verticalInput;
@@ -35,7 +37,18 @@ public class PlayerController : MonoBehaviour
             isMove = false;
 
         if (isMove)
+        {
             transform.position += movementDirection * movementSpeed * Time.deltaTime;
+            HandleRotation();
+        }
+    }
+    private void HandleRotation()
+    {
+        if (movementDirection != Vector3.zero)
+        {
+            var rotationY = Quaternion.LookRotation(movementDirection, Vector3.up);
+            body.transform.rotation = Quaternion.RotateTowards(body.transform.rotation, rotationY, rotateSpeed * Time.deltaTime);
+        }
     }
 
     public bool GetIsMove()
