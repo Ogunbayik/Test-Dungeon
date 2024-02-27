@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerAnimationController : MonoBehaviour
 {
+    private const string ANIMATOR_MOVE_PARAMETER = "isMove";
+
     private PlayerController playerController;
 
     private Animator animator;
@@ -20,12 +22,15 @@ public class PlayerAnimationController : MonoBehaviour
 
     void Update()
     {
-        
         var isMove = playerController.GetIsMove();
         if (isMove)
-            animator.SetBool("isMove", true);
+            MoveAnimation(true);
         else
-            animator.SetBool("isMove", false);
-        
+            MoveAnimation(false);
+    }
+
+    private void MoveAnimation(bool isMove)
+    {
+        animator.SetBool(ANIMATOR_MOVE_PARAMETER, isMove);
     }
 }
