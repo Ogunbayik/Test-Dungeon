@@ -11,6 +11,15 @@ public class EnemyAnimationController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
     }
+    private void Update()
+    {
+        var isWalk = GetComponentInParent<EnemyBase>().GetIsWalk();
+
+        if (isWalk)
+            WalkAnimation(true);
+        else
+            WalkAnimation(false);
+    }
     public void WalkAnimation(bool isWalk)
     {
         animator.SetBool(WALK_ANIMATION_PARAMETER, isWalk);
