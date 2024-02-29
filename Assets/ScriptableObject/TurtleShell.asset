@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: TurtleShell
   m_EditorClassIdentifier: 
   enemyName: Turtle Shell
+  maxHealth: 100
   walkSpeed: 1.5
   runSpeed: 3.5
   moveRange: 5

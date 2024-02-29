@@ -4,19 +4,102 @@ using UnityEngine;
 
 public abstract class EnemyBase : MonoBehaviour
 {
+    protected enum MovementType
+    {
+        TwoPoints,
+        RandomPosition
+    }
+
+    [SerializeField] protected MovementType movementType;
     [SerializeField] protected EnemySO enemySO;
+    [SerializeField] protected PlayerAttackController player;
 
-    protected float waitTimer;
-    protected float maximumX;
-    protected float minimumX;
-    protected float maximumZ;
-    protected float minimumZ;
+    private float waitTimer;
+    private float maximumX;
+    private float minimumX;
+    private float maximumZ;
+    private float minimumZ;
 
-    protected Vector3 desiredPosition;
-    protected Vector3 randomPosition;
+    private Vector3 firstPosition;
+    private Vector3 secondPosition;
+    private Vector3 desiredPosition;
+    private Vector3 randomPosition;
 
-    protected bool isWalk = false;
+    private int currentHealth;
+
+    private bool isWalk = false;
     private bool isFirst = true;
+    private bool xDirection;
+
+    public bool canHit = true;
+
+    protected void Initialize(EnemyBase enemyBase)
+    {
+        if (enemyBase.movementType == MovementType.TwoPoints)
+            InitialTwoDirection(enemyBase);
+        else if (enemyBase.movementType == MovementType.RandomPosition)
+            InitialRandomPosition(enemyBase);
+
+        player = FindObjectOfType<PlayerAttackController>();
+        currentHealth = enemyBase.enemySO.maxHealth;
+        waitTimer = enemyBase.enemySO.maxWaitTimer;
+
+        player.OnHitEnemy += Player_OnHitEnemy;
+    }
+
+    private void Player_OnHitEnemy(object sender, int e)
+    {
+        if (currentHealth > e)
+        {
+            TakeDamage(e);
+            Debug.Log("Hitted");
+            canHit = false;
+        }
+        else
+        {
+            Debug.Log("Dead");
+            canHit = false;
+        }
+    }
+
+    private void InitialTwoDirection(EnemyBase enemyBase)
+    {
+        desiredPosition = enemyBase.transform.localPosition;
+
+        var randomValue = Random.value;
+        if (randomValue > 0.5)
+            xDirection = false;
+        else
+            xDirection = true;
+
+        if (xDirection)
+        {
+            firstPosition = enemyBase.transform.localPosition + new Vector3(enemyBase.enemySO.moveRange, 0f, 0f);
+            secondPosition = enemyBase.transform.localPosition - new Vector3(enemyBase.enemySO.moveRange, 0f, 0f);
+        }
+        else
+        {
+            firstPosition = enemyBase.transform.localPosition + new Vector3(0f, 0f, enemyBase.enemySO.moveRange);
+            secondPosition = enemyBase.transform.localPosition - new Vector3(0f, 0f, enemyBase.enemySO.moveRange);
+        }
+    }
+
+    private void InitialRandomPosition(EnemyBase enemyBase)
+    {
+        maximumX = enemyBase.transform.localPosition.x + enemyBase.enemySO.moveRange;
+        minimumX = enemyBase.transform.localPosition.x - enemyBase.enemySO.moveRange;
+        maximumZ = enemyBase.transform.localPosition.z + enemyBase.enemySO.moveRange;
+        minimumZ = enemyBase.transform.localPosition.z - enemyBase.enemySO.moveRange;
+        randomPosition = enemyBase.transform.localPosition;
+    }
+
+    protected void Movement(EnemyBase enemyBase)
+    {
+        if (enemyBase.movementType == MovementType.TwoPoints)
+            MovementBetweenTwoPoints(firstPosition, secondPosition);
+        else if (enemyBase.movementType == MovementType.RandomPosition)
+            MovementRandomPosition();
+    }
 
     #region Movement Types
     protected void MovementBetweenTwoPoints(Vector3 firstPos, Vector3 secondPos)
@@ -99,6 +182,11 @@ public abstract class EnemyBase : MonoBehaviour
         return randomPosition;
     }
     #endregion
+
+    private void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+    }
 
     public bool GetIsWalk()
     {

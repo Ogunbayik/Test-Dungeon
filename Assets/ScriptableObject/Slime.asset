@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Slime
   m_EditorClassIdentifier: 
   enemyName: Slime
-  walkSpeed: 1
+  maxHealth: 50
+  walkSpeed: 0.5
   runSpeed: 2.5
-  moveRange: 5
+  moveRange: 3
   sprite: {fileID: 0}
   maxWaitTimer: 4
