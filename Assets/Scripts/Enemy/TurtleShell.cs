@@ -6,10 +6,10 @@ public class TurtleShell : EnemyBase
 {
     void Start()
     {
-        base.Initialize(this);
+        Initialize(this);
     }
     void Update()
     {
-        Movement(this);
+        UpdateBase(this);
     }
 }

@@ -34,18 +34,6 @@ public class PlayerAttackController : MonoBehaviour
         HandleAttack();
     }
 
-    private void FixedUpdate()
-    {
-        var enemyArray = Physics.OverlapSphere(weaponCheckPoint.position, weaponRadius, enemyLayer);
-
-        foreach (var enemy in enemyArray)
-        {
-            if (enemy.GetComponent<EnemyBase>().canHit == true)
-                OnHitEnemy?.Invoke(this, attackDamage);
-        }
-
-    }
-
     private void HandleAttack()
     {
         if (attackTimer <= 0)
@@ -58,9 +46,25 @@ public class PlayerAttackController : MonoBehaviour
 
         if (canAttack && attackButton && !isMove)
         {
+            CheckEnemyMonster(true);
             canAttack = false;
             attackTimer = attackDelay;
             OnAttack?.Invoke(this, EventArgs.Empty);
+        }
+    }
+    public void CheckEnemyMonster(bool isCheck)
+    {
+        if (isCheck)
+        {
+            var enemyArray = Physics.OverlapSphere(weaponCheckPoint.position, weaponRadius, enemyLayer);
+
+            foreach (var enemy in enemyArray)
+            {
+                if (enemy.GetComponent<EnemyBase>().isInvulnerable == false)
+                {
+                    OnHitEnemy?.Invoke(this, attackDamage);
+                }
+            }
         }
     }
 

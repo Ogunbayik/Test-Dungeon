@@ -6,11 +6,13 @@ public class Slime : EnemyBase
 {
     private void Awake()
     {
-        base.Initialize(this);
+        Initialize(this);
     }
     private void Update()
     {
-        base.Movement(this);
+        UpdateBase(this);
     }
+
+
 
 }

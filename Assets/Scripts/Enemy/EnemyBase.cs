@@ -10,10 +10,21 @@ public abstract class EnemyBase : MonoBehaviour
         RandomPosition
     }
 
+    protected enum States
+    {
+        Patrol,
+        Chase,
+        Dizzy,
+        Attack
+    }
+
     [SerializeField] protected MovementType movementType;
     [SerializeField] protected EnemySO enemySO;
     [SerializeField] protected PlayerAttackController player;
 
+    protected States currentState;
+
+    private float movementSpeed;
     private float waitTimer;
     private float maximumX;
     private float minimumX;
@@ -31,7 +42,7 @@ public abstract class EnemyBase : MonoBehaviour
     private bool isFirst = true;
     private bool xDirection;
 
-    public bool canHit = true;
+    public bool isInvulnerable = false;
 
     protected void Initialize(EnemyBase enemyBase)
     {
@@ -41,26 +52,27 @@ public abstract class EnemyBase : MonoBehaviour
             InitialRandomPosition(enemyBase);
 
         player = FindObjectOfType<PlayerAttackController>();
+        currentState = States.Patrol;
         currentHealth = enemyBase.enemySO.maxHealth;
         waitTimer = enemyBase.enemySO.maxWaitTimer;
 
         player.OnHitEnemy += Player_OnHitEnemy;
     }
-
     private void Player_OnHitEnemy(object sender, int e)
     {
         if (currentHealth > e)
         {
             TakeDamage(e);
-            Debug.Log("Hitted");
-            canHit = false;
+            isInvulnerable = true;
+            waitTimer = enemySO.maxWaitTimer / 2;
         }
         else
         {
             Debug.Log("Dead");
-            canHit = false;
+            isInvulnerable = true;
         }
     }
+
 
     private void InitialTwoDirection(EnemyBase enemyBase)
     {
@@ -93,23 +105,82 @@ public abstract class EnemyBase : MonoBehaviour
         randomPosition = enemyBase.transform.localPosition;
     }
 
-    protected void Movement(EnemyBase enemyBase)
+    protected void UpdateBase(EnemyBase enemyBase)
     {
+        switch (currentState)
+        {
+            case States.Patrol:
+                Patrolling(enemyBase);
+                break;
+            case States.Chase:
+                Chasing(enemyBase);
+                break;
+            case States.Dizzy:
+                enemyBase.movementSpeed = 0;
+                break;
+            case States.Attack:
+                break;
+        }
+
+        CheckInvulnerable(enemyBase);
+    }
+
+    private void CheckInvulnerable(EnemyBase enemyBase)
+    {
+        if (enemyBase.isInvulnerable == true)
+        {
+            enemyBase.currentState = States.Dizzy;
+            movementSpeed = 0;
+            waitTimer -= Time.deltaTime;
+
+            if (waitTimer <= 0)
+            {
+                enemyBase.currentState = States.Chase;
+                isInvulnerable = false;
+                movementSpeed = enemyBase.enemySO.runSpeed;
+                waitTimer = enemyBase.enemySO.maxWaitTimer;
+            }
+        }
+    }
+
+    protected void Patrolling(EnemyBase enemyBase)
+    {
+        movementSpeed = enemyBase.enemySO.walkSpeed;
+
         if (enemyBase.movementType == MovementType.TwoPoints)
-            MovementBetweenTwoPoints(firstPosition, secondPosition);
+            PatrolBetweenTwoPoints(firstPosition, secondPosition);
         else if (enemyBase.movementType == MovementType.RandomPosition)
-            MovementRandomPosition();
+            PatrolRandomPosition();
+
+        var distanceBetweenPlayer = Vector3.Distance(enemyBase.transform.position, player.transform.position);
+        if (distanceBetweenPlayer <= enemyBase.enemySO.chaseDistance)
+        {
+            currentState = States.Chase;
+        }
+    }
+
+    protected void Chasing(EnemyBase enemyBase)
+    {
+        movementSpeed = enemyBase.enemySO.runSpeed;
+
+        transform.LookAt(player.transform.position);
+        transform.position = Vector3.MoveTowards(enemyBase.transform.position, player.transform.position, enemyBase.enemySO.runSpeed * Time.deltaTime);
+
+        var distanceBetweenPlayer = Vector3.Distance(enemyBase.transform.position, player.transform.position);
+
+        if (distanceBetweenPlayer >= enemyBase.enemySO.chaseDistance)
+            currentState = States.Patrol;
     }
 
     #region Movement Types
-    protected void MovementBetweenTwoPoints(Vector3 firstPos, Vector3 secondPos)
+    protected void PatrolBetweenTwoPoints(Vector3 firstPos, Vector3 secondPos)
     {
         var distanceBetweenDesiredPos = Vector3.Distance(transform.position, desiredPosition);
         if(isFirst)
         {
             isWalk = true;
             desiredPosition = firstPos;
-            transform.position = Vector3.MoveTowards(transform.position, desiredPosition, enemySO.walkSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, desiredPosition, movementSpeed * Time.deltaTime);
 
             if (distanceBetweenDesiredPos <= 0.1f)
             {
@@ -129,7 +200,7 @@ public abstract class EnemyBase : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.MoveTowards(transform.position, desiredPosition, enemySO.walkSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, desiredPosition, movementSpeed * Time.deltaTime);
             isWalk = true;
             if (distanceBetweenDesiredPos <= 0.1f)
             {
@@ -150,7 +221,7 @@ public abstract class EnemyBase : MonoBehaviour
         transform.LookAt(desiredPosition);
     }
 
-    protected void MovementRandomPosition()
+    protected void PatrolRandomPosition()
     {
         var distanceBetweenRandomPosition = Vector3.Distance(transform.position, randomPosition);
 
@@ -168,7 +239,7 @@ public abstract class EnemyBase : MonoBehaviour
             }
         }
 
-        transform.position = Vector3.MoveTowards(transform.position, randomPosition, enemySO.walkSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, randomPosition, movementSpeed * Time.deltaTime);
         transform.LookAt(randomPosition);
     }
 
