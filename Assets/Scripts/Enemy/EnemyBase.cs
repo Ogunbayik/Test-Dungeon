@@ -25,7 +25,7 @@ public abstract class EnemyBase : MonoBehaviour
     protected States currentState;
 
     private float movementSpeed;
-    private float waitTimer;
+    protected float waitTimer;
     private float maximumX;
     private float minimumX;
     private float maximumZ;
@@ -36,7 +36,7 @@ public abstract class EnemyBase : MonoBehaviour
     private Vector3 desiredPosition;
     private Vector3 randomPosition;
 
-    private int currentHealth;
+    protected int currentHealth;
 
     private bool isWalk = false;
     private bool isFirst = true;
@@ -263,5 +263,4 @@ public abstract class EnemyBase : MonoBehaviour
     {
         return isWalk;
     }
-
 }

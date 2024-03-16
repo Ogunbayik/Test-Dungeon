@@ -9,6 +9,7 @@ public class PlayerAttackController : MonoBehaviour
     public event EventHandler OnAttack;
 
     private PlayerController playerController;
+    private PlayerWeapon playerWeapon;
 
     [SerializeField] private int attackDamage;
     [SerializeField] private float attackDelay;
@@ -23,6 +24,7 @@ public class PlayerAttackController : MonoBehaviour
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
+        playerWeapon = GetComponentInChildren<PlayerWeapon>();
     }
     void Start()
     {
@@ -41,36 +43,20 @@ public class PlayerAttackController : MonoBehaviour
         else
             attackTimer -= Time.deltaTime;
 
+        if (canAttack)
+            playerWeapon.ColliderActivate(false);
+        else
+            playerWeapon.ColliderActivate(true);
+
         var attackButton = Input.GetKeyDown(KeyCode.Space);
         var isMove = playerController.GetIsMove();
 
         if (canAttack && attackButton && !isMove)
         {
-            CheckEnemyMonster(true);
             canAttack = false;
             attackTimer = attackDelay;
             OnAttack?.Invoke(this, EventArgs.Empty);
         }
-    }
-    public void CheckEnemyMonster(bool isCheck)
-    {
-        if (isCheck)
-        {
-            var enemyArray = Physics.OverlapSphere(weaponCheckPoint.position, weaponRadius, enemyLayer);
-
-            foreach (var enemy in enemyArray)
-            {
-                if (enemy.GetComponent<EnemyBase>().isInvulnerable == false)
-                {
-                    OnHitEnemy?.Invoke(this, attackDamage);
-                }
-            }
-        }
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(weaponCheckPoint.position, weaponRadius);
     }
 
 }

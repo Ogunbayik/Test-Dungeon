@@ -8,7 +8,6 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private Image heartImage;
     [SerializeField] private Text healthText;
     [SerializeField] private int maxHealth;
-    
 
     private int currentHealth;
     private float healthRate;
