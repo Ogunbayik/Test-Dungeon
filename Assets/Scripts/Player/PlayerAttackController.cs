@@ -5,17 +5,12 @@ using System;
 
 public class PlayerAttackController : MonoBehaviour
 {
-    public event EventHandler<int> OnHitEnemy;
     public event EventHandler OnAttack;
 
     private PlayerController playerController;
     private PlayerWeapon playerWeapon;
 
-    [SerializeField] private int attackDamage;
     [SerializeField] private float attackDelay;
-    [SerializeField] private Transform weaponCheckPoint;
-    [SerializeField] private float weaponRadius;
-    [SerializeField] private LayerMask enemyLayer;
 
     private float attackTimer;
 

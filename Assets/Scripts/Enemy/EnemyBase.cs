@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class EnemyBase : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public abstract class EnemyBase : MonoBehaviour
     [SerializeField] protected MovementType movementType;
     [SerializeField] protected EnemySO enemySO;
     [SerializeField] protected PlayerAttackController player;
+    [SerializeField] protected GameObject healthBar;
+    [SerializeField] protected Image fillBar;
 
     protected States currentState;
 
@@ -37,6 +40,7 @@ public abstract class EnemyBase : MonoBehaviour
     private Vector3 randomPosition;
 
     protected int currentHealth;
+    protected float healthRate;
 
     private bool isWalk = false;
     private bool isFirst = true;
@@ -51,26 +55,15 @@ public abstract class EnemyBase : MonoBehaviour
         else if (enemyBase.movementType == MovementType.RandomPosition)
             InitialRandomPosition(enemyBase);
 
-        player = FindObjectOfType<PlayerAttackController>();
         currentState = States.Patrol;
-        currentHealth = enemyBase.enemySO.maxHealth;
-        waitTimer = enemyBase.enemySO.maxWaitTimer;
+        player = FindObjectOfType<PlayerAttackController>();
+        HealthBarActivate(false);
 
-        player.OnHitEnemy += Player_OnHitEnemy;
-    }
-    private void Player_OnHitEnemy(object sender, int e)
-    {
-        if (currentHealth > e)
-        {
-            TakeDamage(e);
-            isInvulnerable = true;
-            waitTimer = enemySO.maxWaitTimer / 2;
-        }
-        else
-        {
-            Debug.Log("Dead");
-            isInvulnerable = true;
-        }
+        currentHealth = enemyBase.enemySO.maxHealth;
+        healthRate = (float) currentHealth / enemySO.maxHealth;
+        fillBar.fillAmount = healthRate;
+
+        waitTimer = enemyBase.enemySO.maxWaitTimer;
     }
 
 
@@ -143,8 +136,10 @@ public abstract class EnemyBase : MonoBehaviour
         }
     }
 
-    protected void Patrolling(EnemyBase enemyBase)
+    private void Patrolling(EnemyBase enemyBase)
     {
+        HealthBarActivate(false);
+
         movementSpeed = enemyBase.enemySO.walkSpeed;
 
         if (enemyBase.movementType == MovementType.TwoPoints)
@@ -159,8 +154,10 @@ public abstract class EnemyBase : MonoBehaviour
         }
     }
 
-    protected void Chasing(EnemyBase enemyBase)
+    private void Chasing(EnemyBase enemyBase)
     {
+        HealthBarActivate(true);
+
         movementSpeed = enemyBase.enemySO.runSpeed;
 
         transform.LookAt(player.transform.position);
@@ -171,6 +168,18 @@ public abstract class EnemyBase : MonoBehaviour
         if (distanceBetweenPlayer >= enemyBase.enemySO.chaseDistance)
             currentState = States.Patrol;
     }
+
+    private void HealthBarActivate(bool isActive)
+    {
+        healthBar.gameObject.SetActive(isActive);
+    }
+
+    protected void ChangeFillAmount(EnemyBase enemyBase)
+    {
+        healthRate = (float)currentHealth / enemyBase.enemySO.maxHealth;
+        fillBar.fillAmount = healthRate;
+    }
+
 
     #region Movement Types
     protected void PatrolBetweenTwoPoints(Vector3 firstPos, Vector3 secondPos)
@@ -253,11 +262,6 @@ public abstract class EnemyBase : MonoBehaviour
         return randomPosition;
     }
     #endregion
-
-    private void TakeDamage(int damage)
-    {
-        currentHealth -= damage;
-    }
 
     public bool GetIsWalk()
     {

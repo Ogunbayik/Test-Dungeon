@@ -5,7 +5,6 @@ using System;
 
 public class PlayerWeapon : MonoBehaviour
 {
-    public event Action<PlayerWeapon> OnTakeDamage;
     private BoxCollider boxCollider;
     private void Awake()
     {

@@ -16,7 +16,8 @@ public class TurtleShell : EnemyBase , IDamageable
     {
         if (currentHealth > damage)
         {
-            TakeDamage(damage);
+            currentHealth -= damage;
+            ChangeFillAmount(this);
             isInvulnerable = true;
             waitTimer = enemySO.maxWaitTimer / 2;
         }

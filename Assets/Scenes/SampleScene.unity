@@ -310,13 +310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a18318ba1fcb04d9821b19f0839daf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 10
   attackDelay: 1
-  weaponCheckPoint: {fileID: 1770081145}
-  weaponRadius: 0.5
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -410,6 +404,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &840624077 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 840624077, guid: e72487329507dfa43894c3a094189e1e, type: 3}
+  m_PrefabInstance: {fileID: 1434225375}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &928747539
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -427,7 +432,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1054360208601344959, guid: 8f6f92d9dd48ca244a45d41bafa449bb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12
+      value: -5.66
       objectReference: {fileID: 0}
     - target: {fileID: 1054360208601344959, guid: 8f6f92d9dd48ca244a45d41bafa449bb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -550,6 +555,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &995942219 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 995942219, guid: e72487329507dfa43894c3a094189e1e, type: 3}
+  m_PrefabInstance: {fileID: 1434225375}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1327567441
 GameObject:
   m_ObjectHideFlags: 0
@@ -691,7 +701,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1359562498}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be1e13f62ba2c184aa256cc3a9f213c8, type: 3}
   m_Name: 
@@ -711,6 +721,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: TurtleShell
       objectReference: {fileID: 0}
+    - target: {fileID: 3016095294537505594, guid: e72487329507dfa43894c3a094189e1e, type: 3}
+      propertyPath: fillBar
+      value: 
+      objectReference: {fileID: 840624077}
+    - target: {fileID: 3016095294537505594, guid: e72487329507dfa43894c3a094189e1e, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 995942219}
     - target: {fileID: 3016095294537505595, guid: e72487329507dfa43894c3a094189e1e, type: 3}
       propertyPath: m_RootOrder
       value: 6
