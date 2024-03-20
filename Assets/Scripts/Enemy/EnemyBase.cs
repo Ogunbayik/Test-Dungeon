@@ -19,6 +19,7 @@ public abstract class EnemyBase : MonoBehaviour
         Attack
     }
 
+    [SerializeField] protected Collider enemyCollider;
     [SerializeField] protected MovementType movementType;
     [SerializeField] protected EnemySO enemySO;
     [SerializeField] protected PlayerAttackController player;
@@ -57,6 +58,7 @@ public abstract class EnemyBase : MonoBehaviour
 
         currentState = States.Patrol;
         player = FindObjectOfType<PlayerAttackController>();
+        enemyCollider = GetComponent<Collider>();
         HealthBarActivate(false);
 
         currentHealth = enemyBase.enemySO.maxHealth;
@@ -123,12 +125,14 @@ public abstract class EnemyBase : MonoBehaviour
         if (enemyBase.isInvulnerable == true)
         {
             enemyBase.currentState = States.Dizzy;
+            enemyBase.enemyCollider.enabled = false;
             movementSpeed = 0;
             waitTimer -= Time.deltaTime;
 
             if (waitTimer <= 0)
             {
                 enemyBase.currentState = States.Chase;
+                enemyBase.enemyCollider.enabled = true;
                 isInvulnerable = false;
                 movementSpeed = enemyBase.enemySO.runSpeed;
                 waitTimer = enemyBase.enemySO.maxWaitTimer;
@@ -266,5 +270,10 @@ public abstract class EnemyBase : MonoBehaviour
     public bool GetIsWalk()
     {
         return isWalk;
+    }
+
+    public EnemySO GetEnemySO()
+    {
+        return enemySO;
     }
 }
