@@ -7,6 +7,7 @@ using System;
 public class PlayerHealth : MonoBehaviour
 {
     public event Action OnHitEnemy;
+    public event Action OnDead;
     public event Action<int> OnTakeDamage;
 
     [SerializeField] private Image heartImage;
@@ -15,6 +16,7 @@ public class PlayerHealth : MonoBehaviour
 
     private int currentHealth;
     private float healthRate;
+    private bool isDead = false;
     void Start()
     {
         currentHealth = maxHealth;
@@ -30,10 +32,22 @@ public class PlayerHealth : MonoBehaviour
 
     private void PlayerHealth_OnTakeDamage(int damage)
     {
-        currentHealth -= damage;
-        healthText.text = currentHealth.ToString();
-        healthRate = (float)currentHealth / maxHealth;
-        heartImage.fillAmount = healthRate;
+        if (currentHealth > damage)
+        {
+            currentHealth -= damage;
+            healthText.text = currentHealth.ToString();
+            healthRate = (float)currentHealth / maxHealth;
+            heartImage.fillAmount = healthRate;
+        }
+        else
+        {
+            isDead = true;
+            currentHealth = 0;
+            healthText.text = currentHealth.ToString();
+            healthRate = (float)currentHealth / maxHealth;
+            heartImage.fillAmount = healthRate;
+            OnDead?.Invoke();
+        }
     }
 
 

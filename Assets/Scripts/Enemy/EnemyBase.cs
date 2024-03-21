@@ -22,7 +22,7 @@ public abstract class EnemyBase : MonoBehaviour
     [SerializeField] protected Collider enemyCollider;
     [SerializeField] protected MovementType movementType;
     [SerializeField] protected EnemySO enemySO;
-    [SerializeField] protected PlayerAttackController player;
+    [SerializeField] protected PlayerHealth player;
     [SerializeField] protected GameObject healthBar;
     [SerializeField] protected Image fillBar;
 
@@ -57,7 +57,7 @@ public abstract class EnemyBase : MonoBehaviour
             InitialRandomPosition(enemyBase);
 
         currentState = States.Patrol;
-        player = FindObjectOfType<PlayerAttackController>();
+        player = FindObjectOfType<PlayerHealth>();
         enemyCollider = GetComponent<Collider>();
         HealthBarActivate(false);
 
