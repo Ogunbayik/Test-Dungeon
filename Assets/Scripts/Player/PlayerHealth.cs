@@ -16,7 +16,6 @@ public class PlayerHealth : MonoBehaviour
 
     private int currentHealth;
     private float healthRate;
-    private bool isDead = false;
     void Start()
     {
         currentHealth = maxHealth;
@@ -41,7 +40,6 @@ public class PlayerHealth : MonoBehaviour
         }
         else
         {
-            isDead = true;
             currentHealth = 0;
             healthText.text = currentHealth.ToString();
             healthRate = (float)currentHealth / maxHealth;

@@ -20,11 +20,15 @@ public class Slime : EnemyBase , IDamageable
             ChangeFillAmount(this);
             isInvulnerable = true;
             waitTimer = enemySO.maxWaitTimer / 2;
+
+            animatorController.HitAnimation();
         }
         else
         {
             Debug.Log("Dead");
             isInvulnerable = true;
+
+            animatorController.DeadAnimation();
         }
 
     }

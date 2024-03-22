@@ -19,6 +19,8 @@ public abstract class EnemyBase : MonoBehaviour
         Attack
     }
 
+    protected EnemyAnimationController animatorController;
+
     [SerializeField] protected Collider enemyCollider;
     [SerializeField] protected MovementType movementType;
     [SerializeField] protected EnemySO enemySO;
@@ -58,6 +60,7 @@ public abstract class EnemyBase : MonoBehaviour
 
         currentState = States.Patrol;
         player = FindObjectOfType<PlayerHealth>();
+        animatorController = GetComponentInChildren<EnemyAnimationController>();
         enemyCollider = GetComponent<Collider>();
         HealthBarActivate(false);
 
@@ -112,6 +115,7 @@ public abstract class EnemyBase : MonoBehaviour
                 break;
             case States.Dizzy:
                 enemyBase.movementSpeed = 0;
+                isWalk = false;
                 break;
             case States.Attack:
                 break;
@@ -236,6 +240,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected void PatrolRandomPosition()
     {
+        isWalk = true;
         var distanceBetweenRandomPosition = Vector3.Distance(transform.position, randomPosition);
 
         if(distanceBetweenRandomPosition <= 0.1f)

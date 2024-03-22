@@ -6,8 +6,7 @@ public class TurtleShell : EnemyBase , IDamageable
 {
     void Start()
     {
-        Initialize(this);
-    }
+        Initialize(this);    }
     void Update()
     {
         UpdateBase(this);
@@ -20,11 +19,15 @@ public class TurtleShell : EnemyBase , IDamageable
             ChangeFillAmount(this);
             isInvulnerable = true;
             waitTimer = enemySO.maxWaitTimer / 2;
+
+            animatorController.HitAnimation();
         }
         else
         {
             Debug.Log("Dead");
             isInvulnerable = true;
+
+            animatorController.DeadAnimation();
         }
 
     }
