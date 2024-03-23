@@ -4,25 +4,70 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> enemyList;
+    public static SpawnManager Instance { get; private set; }
 
+    [Header("Spawn Settings")]
+    [SerializeField] private List<GameObject> enemyList = new List<GameObject>();
+    [SerializeField] private float maxSpawnTimer;
     [SerializeField] private float maxSpawnCount;
 
-    private float spawnCount;
+    public float spawnCount;
+
+    private float spawnTimer;
+
+    private bool isSpawning;
+
     void Start()
     {
-        spawnCount = 0;
-        enemyList = new List<GameObject>();
-
-        while (spawnCount < maxSpawnCount)
+        #region Singleton
+        if (Instance == null)
         {
-            Debug.Log("Spawned");
-            spawnCount++;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
+        else
+        {
+            Destroy(gameObject);
+        }
+        #endregion
+
+        spawnTimer = maxSpawnTimer;
+        isSpawning = true;
+        spawnCount = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
+        SpawnEnemy();
+    }
+
+    private void SpawnEnemy()
+    {
+        if (isSpawning == false)
+            return;
+
+        if (spawnCount < maxSpawnCount)
+            isSpawning = true;
+        else
+            isSpawning = false;
+
+        if (isSpawning)
+        {
+            spawnTimer -= Time.deltaTime;
+
+            if (spawnTimer <= 0)
+            {
+                spawnCount++;
+                spawnTimer = maxSpawnTimer;
+                CreateEnemy();
+            }
+        }
+    }
+
+    private void CreateEnemy()
+    {
+        var randomIndex = Random.Range(0, enemyList.Count);
+        Debug.Log(randomIndex);
     }
 }

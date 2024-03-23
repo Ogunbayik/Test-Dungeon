@@ -17,7 +17,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var weaponDamage = 5;
+        var weaponDamage = 20;
         var enemy = other.gameObject.GetComponent<IDamageable>();
 
         if (enemy != null)

@@ -6,6 +6,8 @@ using System;
 
 public class PlayerHealth : MonoBehaviour
 {
+    private const string ENVIRONMENT_TAG = "Environment";
+
     public event Action OnHitEnemy;
     public event Action OnDead;
     public event Action<int> OnTakeDamage;
@@ -51,6 +53,9 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.CompareTag(ENVIRONMENT_TAG))
+            return;
+
         var enemy = collision.gameObject.GetComponent<EnemyBase>();
         var enemySO = enemy.GetEnemySO();
 

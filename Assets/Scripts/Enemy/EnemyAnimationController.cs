@@ -7,6 +7,7 @@ public class EnemyAnimationController : MonoBehaviour
     private const string WALK_ANIMATION_PARAMETER = "isWalk";
     private const string HIT_ANIMATION_PARAMETER = "isHit";
     private const string DEAD_ANIMATION_PARAMETER = "isDead";
+    private const string VICTORY_ANIMATION_PARAMETER = "isVictory";
 
     private Animator animator;
     private void Awake()
@@ -35,6 +36,17 @@ public class EnemyAnimationController : MonoBehaviour
     public void DeadAnimation()
     {
         animator.SetTrigger(DEAD_ANIMATION_PARAMETER);
+    }
+
+    public void VictoryAnimation()
+    {
+        animator.SetTrigger(VICTORY_ANIMATION_PARAMETER);
+    }
+
+    public void DestroyEnemy()
+    {
+        var enemy = this.gameObject.GetComponentInParent<EnemyBase>();
+        Destroy(enemy.gameObject);
     }
 
 }

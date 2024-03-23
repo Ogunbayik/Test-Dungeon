@@ -185,6 +185,7 @@ public abstract class EnemyBase : MonoBehaviour
     protected void ChangeFillAmount(EnemyBase enemyBase)
     {
         healthRate = (float)currentHealth / enemyBase.enemySO.maxHealth;
+
         fillBar.fillAmount = healthRate;
     }
 
@@ -253,7 +254,6 @@ public abstract class EnemyBase : MonoBehaviour
                 isWalk = true;
                 waitTimer = enemySO.maxWaitTimer;
                 randomPosition = GetRandomPosition();
-                Debug.Log(randomPosition);
             }
         }
 

@@ -24,7 +24,9 @@ public class TurtleShell : EnemyBase , IDamageable
         }
         else
         {
-            Debug.Log("Dead");
+            SpawnManager.Instance.spawnCount--;
+
+            ChangeFillAmount(this);
             isInvulnerable = true;
 
             animatorController.DeadAnimation();
