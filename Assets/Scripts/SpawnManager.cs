@@ -10,6 +10,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private List<GameObject> enemyList = new List<GameObject>();
     [SerializeField] private float maxSpawnTimer;
     [SerializeField] private float maxSpawnCount;
+    [SerializeField] private Transform[] spawnPositions;
 
     public float spawnCount;
 
@@ -31,15 +32,29 @@ public class SpawnManager : MonoBehaviour
         }
         #endregion
 
+        InitializeEnemy();
+    }
+
+    private void InitializeEnemy()
+    {
         spawnTimer = maxSpawnTimer;
         isSpawning = true;
         spawnCount = 0;
+
+        for (int i = 0; i < spawnPositions.Length; i++)
+        {
+            var randomIndex = Random.Range(0, enemyList.Count);
+            var randomEnemy = enemyList[randomIndex];
+
+            var enemy = Instantiate(randomEnemy,spawnPositions[i]);
+            spawnPositions[i].GetComponent<SpawnPoint>().IsSpawned(true);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        SpawnEnemy();
+        //SpawnEnemy();
     }
 
     private void SpawnEnemy()
@@ -68,6 +83,9 @@ public class SpawnManager : MonoBehaviour
     private void CreateEnemy()
     {
         var randomIndex = Random.Range(0, enemyList.Count);
-        Debug.Log(randomIndex);
+        var randomEnemy = Instantiate(enemyList[randomIndex]);
+
+        
+
     }
 }

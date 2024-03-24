@@ -12,29 +12,47 @@ public class PlayerHealth : MonoBehaviour
     public event Action OnDead;
     public event Action<int> OnTakeDamage;
 
+    private PlayerController playerController;
+    private PlayerAttackController playerAttackController;
+
+
     [SerializeField] private Image heartImage;
     [SerializeField] private Text healthText;
     [SerializeField] private int maxHealth;
 
     private int currentHealth;
+
     private float healthRate;
+
+    private bool isDeath;
     void Start()
     {
         currentHealth = maxHealth;
         healthRate = currentHealth / maxHealth;
         heartImage.fillAmount = healthRate;
         healthText.text = currentHealth.ToString();
+
+        playerController = GetComponent<PlayerController>();
+        playerAttackController = GetComponent<PlayerAttackController>();
+
     }
 
     private void OnEnable()
     {
         OnTakeDamage += PlayerHealth_OnTakeDamage;
+        OnDead += PlayerHealth_OnDead;
+    }
+
+    private void PlayerHealth_OnDead()
+    {
+        StopController();
     }
 
     private void PlayerHealth_OnTakeDamage(int damage)
     {
         if (currentHealth > damage)
         {
+            //HIT
             currentHealth -= damage;
             healthText.text = currentHealth.ToString();
             healthRate = (float)currentHealth / maxHealth;
@@ -42,6 +60,8 @@ public class PlayerHealth : MonoBehaviour
         }
         else
         {
+            //DEAD
+            isDeath = true;
             currentHealth = 0;
             healthText.text = currentHealth.ToString();
             healthRate = (float)currentHealth / maxHealth;
@@ -65,4 +85,16 @@ public class PlayerHealth : MonoBehaviour
             OnTakeDamage?.Invoke(enemySO.enemyDamage);
         }
     }
+
+    private void StopController()
+    {
+        playerController.enabled = false;
+        playerAttackController.enabled = false;
+    }
+
+    public bool GetIsDead()
+    {
+        return isDeath;
+    }
+
 }

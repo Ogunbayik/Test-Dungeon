@@ -84,23 +84,23 @@ public abstract class EnemyBase : MonoBehaviour
 
         if (xDirection)
         {
-            firstPosition = enemyBase.transform.localPosition + new Vector3(enemyBase.enemySO.moveRange, 0f, 0f);
-            secondPosition = enemyBase.transform.localPosition - new Vector3(enemyBase.enemySO.moveRange, 0f, 0f);
+            firstPosition = enemyBase.transform.position + new Vector3(enemyBase.enemySO.moveRange, 0f, 0f);
+            secondPosition = enemyBase.transform.position - new Vector3(enemyBase.enemySO.moveRange, 0f, 0f);
         }
         else
         {
-            firstPosition = enemyBase.transform.localPosition + new Vector3(0f, 0f, enemyBase.enemySO.moveRange);
-            secondPosition = enemyBase.transform.localPosition - new Vector3(0f, 0f, enemyBase.enemySO.moveRange);
+            firstPosition = enemyBase.transform.position + new Vector3(0f, 0f, enemyBase.enemySO.moveRange);
+            secondPosition = enemyBase.transform.position - new Vector3(0f, 0f, enemyBase.enemySO.moveRange);
         }
     }
 
     private void InitialRandomPosition(EnemyBase enemyBase)
     {
-        maximumX = enemyBase.transform.localPosition.x + enemyBase.enemySO.moveRange;
-        minimumX = enemyBase.transform.localPosition.x - enemyBase.enemySO.moveRange;
-        maximumZ = enemyBase.transform.localPosition.z + enemyBase.enemySO.moveRange;
-        minimumZ = enemyBase.transform.localPosition.z - enemyBase.enemySO.moveRange;
-        randomPosition = enemyBase.transform.localPosition;
+        maximumX = enemyBase.transform.position.x + enemyBase.enemySO.moveRange;
+        minimumX = enemyBase.transform.position.x - enemyBase.enemySO.moveRange;
+        maximumZ = enemyBase.transform.position.z + enemyBase.enemySO.moveRange;
+        minimumZ = enemyBase.transform.position.z - enemyBase.enemySO.moveRange;
+        randomPosition = enemyBase.transform.position;
     }
 
     protected void UpdateBase(EnemyBase enemyBase)
@@ -155,8 +155,9 @@ public abstract class EnemyBase : MonoBehaviour
         else if (enemyBase.movementType == MovementType.RandomPosition)
             PatrolRandomPosition();
 
+        var isPlayerDead = player.GetIsDead();
         var distanceBetweenPlayer = Vector3.Distance(enemyBase.transform.position, player.transform.position);
-        if (distanceBetweenPlayer <= enemyBase.enemySO.chaseDistance)
+        if (distanceBetweenPlayer <= enemyBase.enemySO.chaseDistance && isPlayerDead == false)
         {
             currentState = States.Chase;
         }
@@ -171,9 +172,10 @@ public abstract class EnemyBase : MonoBehaviour
         transform.LookAt(player.transform.position);
         transform.position = Vector3.MoveTowards(enemyBase.transform.position, player.transform.position, enemyBase.enemySO.runSpeed * Time.deltaTime);
 
+        var isPlayerDead = player.GetIsDead();
         var distanceBetweenPlayer = Vector3.Distance(enemyBase.transform.position, player.transform.position);
 
-        if (distanceBetweenPlayer >= enemyBase.enemySO.chaseDistance)
+        if (distanceBetweenPlayer >= enemyBase.enemySO.chaseDistance || isPlayerDead == true)
             currentState = States.Patrol;
     }
 

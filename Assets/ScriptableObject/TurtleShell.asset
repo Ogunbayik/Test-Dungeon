@@ -17,7 +17,7 @@ MonoBehaviour:
   maxHealth: 100
   walkSpeed: 1
   runSpeed: 2
-  moveRange: 5
+  moveRange: 4
   sprite: {fileID: 0}
   maxWaitTimer: 3
   chaseDistance: 7
