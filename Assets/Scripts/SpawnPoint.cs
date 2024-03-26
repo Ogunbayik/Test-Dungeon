@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
-    private bool isSpawned;
-    void Start()
-    {
-        isSpawned = false;
-    }
+    public bool isSpawned;
 
-    public void IsSpawned(bool isSpawned)
+    public void SetSpawned(bool isSpawned)
     {
         this.isSpawned = isSpawned;
+    }
+
+    public bool IsSpawned()
+    {
+        return isSpawned;
     }
 }

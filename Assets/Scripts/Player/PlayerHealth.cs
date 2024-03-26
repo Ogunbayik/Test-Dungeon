@@ -53,21 +53,24 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth > damage)
         {
             //HIT
-            currentHealth -= damage;
-            healthText.text = currentHealth.ToString();
-            healthRate = (float)currentHealth / maxHealth;
-            heartImage.fillAmount = healthRate;
+            SetFillBar(damage);
         }
         else
         {
             //DEAD
             isDeath = true;
+            SetFillBar(damage);
             currentHealth = 0;
-            healthText.text = currentHealth.ToString();
-            healthRate = (float)currentHealth / maxHealth;
-            heartImage.fillAmount = healthRate;
             OnDead?.Invoke();
         }
+    }
+
+    private void SetFillBar(int damage)
+    {
+        currentHealth -= damage;
+        healthText.text = currentHealth.ToString();
+        healthRate = (float)currentHealth / maxHealth;
+        heartImage.fillAmount = healthRate;
     }
 
 

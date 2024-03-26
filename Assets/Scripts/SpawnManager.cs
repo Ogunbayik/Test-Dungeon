@@ -6,6 +6,14 @@ public class SpawnManager : MonoBehaviour
 {
     public static SpawnManager Instance { get; private set; }
 
+    public enum SpawnType
+    {
+        Infinity,
+        Finite
+    }
+
+    public SpawnType spawnType;
+
     [Header("Spawn Settings")]
     [SerializeField] private List<GameObject> enemyList = new List<GameObject>();
     [SerializeField] private float maxSpawnTimer;
@@ -15,8 +23,6 @@ public class SpawnManager : MonoBehaviour
     public float spawnCount;
 
     private float spawnTimer;
-
-    private bool isSpawning;
 
     void Start()
     {
@@ -32,60 +38,78 @@ public class SpawnManager : MonoBehaviour
         }
         #endregion
 
-        InitializeEnemy();
+        StartSpawning();
     }
 
-    private void InitializeEnemy()
+    private void StartSpawning()
     {
         spawnTimer = maxSpawnTimer;
-        isSpawning = true;
         spawnCount = 0;
 
         for (int i = 0; i < spawnPositions.Length; i++)
         {
+            spawnPositions[i].GetComponent<SpawnPoint>().SetSpawned(true);
+
             var randomIndex = Random.Range(0, enemyList.Count);
             var randomEnemy = enemyList[randomIndex];
-
             var enemy = Instantiate(randomEnemy,spawnPositions[i]);
-            spawnPositions[i].GetComponent<SpawnPoint>().IsSpawned(true);
+            
+            spawnCount++;
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //SpawnEnemy();
+        switch(spawnType)
+        {
+            case SpawnType.Infinity:
+                InfinitySpawn();
+                break;
+            case SpawnType.Finite:
+                FiniteSpawn();
+                break;
+        }
     }
 
-    private void SpawnEnemy()
+    private void InfinitySpawn()
     {
-        if (isSpawning == false)
-            return;
-
-        if (spawnCount < maxSpawnCount)
-            isSpawning = true;
-        else
-            isSpawning = false;
-
-        if (isSpawning)
+        foreach (var spawnPos in spawnPositions)
         {
-            spawnTimer -= Time.deltaTime;
+            var spawnPoint = spawnPos.GetComponent<SpawnPoint>();
 
-            if (spawnTimer <= 0)
+            if (spawnPos.childCount > 0)
+                spawnPoint.SetSpawned(true);
+            else
+                spawnPoint.SetSpawned(false);
+
+            if (spawnPoint.IsSpawned() == false)
             {
-                spawnCount++;
-                spawnTimer = maxSpawnTimer;
-                CreateEnemy();
+                spawnTimer -= Time.deltaTime;
+
+                if (spawnTimer <= 0)
+                {
+                    spawnTimer = maxSpawnTimer;
+
+                    CreateRandomEnemy(spawnPos);
+                    spawnPoint.SetSpawned(true);
+                }
             }
         }
     }
 
-    private void CreateEnemy()
+    private void FiniteSpawn()
+    {
+        foreach (var spawnPosition in spawnPositions)
+        {
+            var spawnPoint = spawnPosition.GetComponent<SpawnPoint>();
+            spawnPoint.SetSpawned(true);
+        }
+    }
+
+    private void CreateRandomEnemy(Transform spawnPosition)
     {
         var randomIndex = Random.Range(0, enemyList.Count);
-        var randomEnemy = Instantiate(enemyList[randomIndex]);
-
-        
-
+        var randomEnemy = Instantiate(enemyList[randomIndex], spawnPosition);
+        randomEnemy.transform.position = spawnPosition.position;
     }
 }
